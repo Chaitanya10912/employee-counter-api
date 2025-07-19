@@ -1,7 +1,7 @@
 FROM node:18-alpine
-WORKDIR /app
-COPY app/package*.json ./
+WORKDIR /employee-counter-api
+COPY employee-counter-api/package*.json ./
 RUN npm install
-COPY app/ .
+COPY employee-counter-api/ .
 EXPOSE 3000
 CMD ["node", "index.js"]
