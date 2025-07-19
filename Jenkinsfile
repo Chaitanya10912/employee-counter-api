@@ -27,7 +27,7 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
           script {
             env.IMAGE_NAME = "${DOCKER_USER}/employee-counter"
-            sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+            bat 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
         }
       }
     }
@@ -35,13 +35,13 @@ pipeline {
 
     stage('Push Docker Image') {
       steps {
-        sh "docker push ${IMAGE_NAME}:${TAG}"
+        bat "docker push ${IMAGE_NAME}:${TAG}"
       }
     }
 
     stage('Clean up') {
       steps {
-        sh "docker rmi ${IMAGE_NAME}:${TAG} || true"
+        bat "docker rmi ${IMAGE_NAME}:${TAG} || true"
       }
     }
   }
