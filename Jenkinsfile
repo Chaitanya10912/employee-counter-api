@@ -3,7 +3,7 @@ pipeline {
 
   environment {
     REGISTRY = "docker.io"
-    IMAGE_NAME = "${DOCKER_USER}/employee-counter"
+    IMAGE_NAME = "" // Initialized, will be set dynamically after Docker Hub login
     TAG = "build-${BUILD_NUMBER}"
   }
 
@@ -14,20 +14,21 @@ pipeline {
       }
     }
 
-    stage('Build Docker Image') {
-      steps {
-        script {
-          docker.build("${IMAGE_NAME}:${TAG}")
-        }
-      }
-    }
-    
-   stage('Login to Docker Hub') {
+    stage('Login to Docker Hub') {
       steps {
         withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
           script {
             env.IMAGE_NAME = "${DOCKER_USER}/employee-counter"
             sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+          }
+        }
+      }
+    }
+
+    stage('Build Docker Image') {
+      steps {
+        script {
+          docker.build("${IMAGE_NAME}:${TAG}")
         }
       }
     }
@@ -45,3 +46,4 @@ pipeline {
     }
   }
 }
+
